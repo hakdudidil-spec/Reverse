@@ -1,0 +1,26 @@
+services:
+  xray-kariz:
+    build: .
+    container_name: xray-kariz
+    restart: unless-stopped
+    environment:
+      # Domain of the container -> links and sni/host are built from it. Leave empty for IP mode.
+      XRAY_DOMAIN: "${XRAY_DOMAIN:-}"
+      # Internal public entry port of Xray (your reverse proxy / host maps to this).
+      XRAY_PORT: "80"
+      # Port written in the links (443 when a TLS proxy sits in front).
+      XRAY_LINK_PORT: "${XRAY_LINK_PORT:-443}"
+      XRAY_LINK_TLS: "${XRAY_LINK_TLS:-tls}"
+      # Optional: fixed UUID instead of a new one each start.
+      XRAY_UUID: "${XRAY_UUID:-}"
+      # Kariz join code (only needed on first run).
+      JOIN_CODE: "${JOIN_CODE:-}"
+    ports:
+      - "80:80"
+    volumes:
+      - kariz-data:/app/kariz
+      - xray-data:/app/xray
+
+volumes:
+  kariz-data:
+  xray-data:
